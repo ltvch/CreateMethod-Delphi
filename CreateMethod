@@ -1,0 +1,62 @@
+program CreateMethod;
+(*
+  * Создающий метод  — простой метод-обёртка над вызовом конструктора продукта.
+  * Выделив создающий метод, вы изолируете любые изменения в
+  * конструировании продуктов от основного кода.
+
+  * Т.е. можно убрать вызов конструктора из создающего метода,
+  * отдавая вместо нового какой-то существующий объект
+*)
+
+(*
+  * Нельзя называть его фабричным методом потому, что он создаёт новые объекты,
+  * а раз «все фабрики создают что-то, значит этот метод — фабричный»,
+  * запутывая между понятием Создающего метода и паттерном Фабричный метод.
+*)
+
+{$APPTYPE CONSOLE}
+{$R *.res}
+
+uses
+  System.SysUtils;
+
+type
+  (* concrete propuct *)
+  TNumber = class
+    fValue: integer;
+  public
+    constructor Create(Value: integer);
+    function Next(): TNumber;
+  end;
+
+  { TNumber }
+
+constructor TNumber.Create(Value: integer);
+begin
+  fValue := Value;
+end;
+
+function TNumber.Next: TNumber;
+begin
+  Result := TNumber.Create(fValue + 1);
+end;
+
+var
+  number, number2: TNumber;
+
+begin
+  try
+    { TODO -oUser -cConsole Main : Insert code here }
+    number := TNumber.Create(3);
+    number2 := number.Next;
+
+    WriteLn(IntToStr(number.fValue));
+    WriteLn(IntToStr(number2.fValue));
+
+    ReadLn;
+  except
+    on E: Exception do
+      WriteLn(E.ClassName, ': ', E.Message);
+  end;
+
+end.
